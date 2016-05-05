@@ -1,20 +1,15 @@
-# amitkhare/slim-hmvc
-A HMVC modular application for Slim Framework. Use this application to quickly setup and start working on a new Slim Framework 3 with HMVC capebilities.
+# amitkhare/php-validation
+Easy to use PHP validation library
 
-## Install -skeleton
+## Install -php-validation
 
-Run this command from the directory in which you want to install your new Slim 3 Framework with modular HMVC.
+Run this command from the directory in which you want to install.
 
 Via Composer:
 
-    php composer.phar create-project amitkhare/slim-hmvc-skeleton [my-app-name]
+    php composer.phar require amitkhare/php-validation
 
 Via Git:
 
-    git clone https://github.com/amitkhare/slim-hmvc-skeleton.git [my-app-name]
+    git clone https://github.com/amitkhare/slim-hmvc-skeleton.git
 
-    composer update
-
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
-
-VISIT : https://github.com/amitkhare/slim-hmvc-skeleton for Usage information
