@@ -1,0 +1,20 @@
+{
+    "name": "amitkhare/php-validation",
+    "description": "An easy and simple PHP validation library",
+    "homepage": "http://github.com/amitkhare/php-validation",
+    "license": "MIT",
+    "autoload":{
+        "psr-4":{
+            "AmitKhare\\":"AmitKhare/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Amit Kumar Khare",
+            "email": "me.amitkhare@gmail.com"
+        }
+    ],
+
+    "minimum-stability": "dev",
+    "require": {}
+}
