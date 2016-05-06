@@ -6,9 +6,10 @@ class ValidateIt {
 	private $code;
 	private $msgs;
 	private $source;
+    private $sanitized = array();
 
 	function __construct(){
-		$this->msgs = array();
+		$this->msgs = false;
 		$this->code = 200;
 	}
 	
@@ -18,9 +19,12 @@ class ValidateIt {
 
 	public function check($field="",$rules="required|numeric|min:2|max:5"){
         $rules = explode("|", $rules);
-        foreach ($rules as $rule) {
-            $this->_fetchRule($field,$rule);
+        if($this->is_set($field)){
+            foreach ($rules as $rule) {
+                $this->_fetchRule($field,$rule);
+            }
         }
+
 	}
 
 	private function  _fetchRule($field,$rule){
@@ -76,13 +80,18 @@ class ValidateIt {
 	}
 
 	public function getStatus(){
-		$status = array(
-				"code"=>$this->code,
-				"msgs"=>$this->msgs,
+        $status = array(
+                "code"=>$this->code,
+                "msgs"=>$this->msgs,
                 "source"=>$this->source
-			);
-		return $status;
-	}
+            );
+        return $status;
+    }
+
+    public function getSanitized(){
+        return $this->sanitized;
+    }
+
 	static function makeStatus($code=200,$msg="ok"){
 		return array("code"=>$code,"msgs"=>array($msg));
 	}
@@ -95,7 +104,9 @@ class ValidateIt {
 	}
 
 	private function is_set($field) {
-        if(!isset($this->source[$field])){
+        if(isset($this->source[$field])){
+            return true;
+        }else {
             $this->setStatus(500,sprintf("The `%s` field is not set.", $field));
         }
     }
@@ -106,7 +117,6 @@ class ValidateIt {
         } elseif(empty($this->source[$field]) || $this->source[$field]=="" || strlen($this->source[$field]) == 0){
             $this->setStatus(500,sprintf("The `%s` field is required.", $field));
         }
-
     }
 
     private function validateIpv4($field) {
@@ -132,13 +142,16 @@ class ValidateIt {
 
             if(!is_string($this->source[$field])) {
                 $this->setStatus(500, $field . ' is invalid string');
+                $this->sanitizeString($field);
             }
 
             if($min!==0 && $max!==0){
                 if(strlen($this->source[$field]) < $min) {
                     $this->setStatus(500,$field . ' is too short');
+                    $this->sanitizeString($field);
                 } elseif(strlen($this->source[$field]) > $max) {
                     $this->setStatus(500,$field . ' is too long');
+                    $this->sanitizeString($field);
                 }
             }
         }
@@ -148,10 +161,12 @@ class ValidateIt {
         if($min!==0 && $max!==0){
             if(filter_var($this->source[$field], FILTER_VALIDATE_INT, array("options" => array("min_range"=>$min, "max_range"=>$max)))===FALSE) {
                 $this->setStatus(500,$field . ' is an invalid number');
+                $this->sanitizeNumeric($field);
             }
         } else {
             if(filter_var($this->source[$field], FILTER_VALIDATE_INT)===FALSE) {
                 $this->setStatus(500,$field . ' is an invalid number');
+                $this->sanitizeNumeric($field);
             }
         }
     }
@@ -159,12 +174,14 @@ class ValidateIt {
     private function validateUrl($field) {
         if(filter_var($this->source[$field], FILTER_VALIDATE_URL) === FALSE) {
             $this->setStatus(500,$field . ' is not a valid URL');
+            $this->sanitizeUrl($field);
         }
     }
 
     private function validateEmail($field) {
         if(filter_var($this->source[$field], FILTER_VALIDATE_EMAIL) === FALSE) {
             $this->setStatus(500,$field . ' is not a valid email address');
+            $this->sanitizeEmail($field);
         }
     }
 
@@ -173,4 +190,22 @@ class ValidateIt {
             $this->setStatus(500,$field . ' is Invalid');
         }
     }
+
+    public function sanitizeEmail($field) {
+        $email = preg_replace( '((?:\n|\r|\t|%0A|%0D|%08|%09)+)i' , '', $this->source[$field] );
+        $this->sanitized[$field] = (string) filter_var($email, FILTER_SANITIZE_EMAIL);
+    }
+
+    private function sanitizeUrl($field) {
+        $this->sanitized[$field] = (string) filter_var($this->source[$field],  FILTER_SANITIZE_URL);
+    }
+
+    private function sanitizeNumeric($field) {
+        $this->sanitized[$field] = (int) filter_var($this->source[$field], FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    private function sanitizeString($field) {
+        $this->sanitized[$field] = (string) filter_var($this->source[$field], FILTER_SANITIZE_STRING);
+    }
+
 }
