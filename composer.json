@@ -1,7 +1,7 @@
 {
-    "name": "amitkhare/validbit",
-    "description": "ValidBit is an easy and simple PHP validation library",
-    "homepage": "http://github.com/amitkhare/validbit",
+    "name": "amitkhare/tengine",
+    "description": "Tengine is an easy to use PHP Template Engine library",
+    "homepage": "http://github.com/amitkhare/tengine",
     "license": "MIT",
     "autoload":{
         "psr-4":{
