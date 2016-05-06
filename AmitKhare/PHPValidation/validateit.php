@@ -25,6 +25,14 @@ class ValidateIt {
 	private function  _fetchRules($rules){
 		$rules = explode("|", $rules);
 		switch($rules){
+                case 'required':
+                    $this->validateRequired($var, $opt['required']);
+                    if(!array_key_exists($var, $this->errors))
+                    {
+                        $this->sanitizeEmail($var);
+                    }
+                    break;
+
                 case 'email':
                     $this->validateEmail($var, $opt['required']);
                     if(!array_key_exists($var, $this->errors))
@@ -139,7 +147,6 @@ class ValidateIt {
     {
         if(!isset($this->source[$var]))
         {
-            
             $mssg = $var . ' is not set';
             $this->setStatus(500,$mssg);
         }
@@ -166,7 +173,6 @@ class ValidateIt {
         }
         if(filter_var($this->source[$var], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE)
         {
-            
             $mssg = $var . ' is not a valid IPv4';
             $this->setStatus(500,$mssg);
         }
@@ -192,7 +198,6 @@ class ValidateIt {
 
         if(filter_var($this->source[$var], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === FALSE)
         {
-            
             $mssg = $var . ' is not a valid IPv6';
             $this->setStatus(500,$mssg);
         }
@@ -216,7 +221,6 @@ class ValidateIt {
         }
         if(filter_var($this->source[$var], FILTER_VALIDATE_FLOAT) === false)
         {
-            
             $mssg = $var . ' is an invalid float';
             $this->setStatus(500,$mssg);
         }
@@ -248,18 +252,15 @@ class ValidateIt {
         {
             if(strlen($this->source[$var]) < $min)
             {
-                
-                $mssg = $var . ' is too short';
+                    $mssg = $var . ' is too short';
             }
             elseif(strlen($this->source[$var]) > $max)
             {
-                
-                $mssg = $var . ' is too long';
+                    $mssg = $var . ' is too long';
             }
             elseif(!is_string($this->source[$var]))
             {
-                
-                $mssg = $var . ' is invalid';
+                    $mssg = $var . ' is invalid';
             }
         }
     }
@@ -287,7 +288,6 @@ class ValidateIt {
         }
         if(filter_var($this->source[$var], FILTER_VALIDATE_INT, array("options" => array("min_range"=>$min, "max_range"=>$max)))===FALSE)
         {
-            
             $mssg = $var . ' is an invalid number';
             $this->setStatus(500,$mssg);
         }
@@ -312,7 +312,6 @@ class ValidateIt {
         }
         if(filter_var($this->source[$var], FILTER_VALIDATE_URL) === FALSE)
         {
-            
             $mssg = $var . ' is not a valid URL';
             $this->setStatus(500,$mssg);
         }
@@ -338,7 +337,6 @@ class ValidateIt {
         }
         if(filter_var($this->source[$var], FILTER_VALIDATE_EMAIL) === FALSE)
         {
-            
             $mssg = $var . ' is not a valid email address';
             $this->setStatus(500,$mssg);
         }
@@ -363,7 +361,6 @@ class ValidateIt {
         }
         filter_var($this->source[$var], FILTER_VALIDATE_BOOLEAN);
         {
-            
             $mssg = $var . ' is Invalid';
             $this->setStatus(500,$mssg);
         }
