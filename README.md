@@ -21,13 +21,13 @@ Manual Install:
 Usage:
     
     <?php
-        use AmitKhare\ValidBit;
+        use AmitKhare\ValidBit; // use namespace.
         
         require("PATH-TO/"."validbit.php"); // only need to include if installed manually.
         
-        $v = new ValidBit();
-        
-        $v->setSource($_POST);
+        $v = new ValidBit(); // instantiate ValidBit;
+
+        $v->setSource($_POST); // set data source array;
         
         $v->check("username","required|string|min:4|max:10");
         $v->check("email","required|email");

@@ -1,7 +1,7 @@
 {
-    "name": "amitkhare/php-validation",
-    "description": "An easy and simple PHP validation library",
-    "homepage": "http://github.com/amitkhare/php-validation",
+    "name": "amitkhare/validbit",
+    "description": "ValidBit is an easy and simple PHP validation library",
+    "homepage": "http://github.com/amitkhare/validbit",
     "license": "MIT",
     "autoload":{
         "psr-4":{

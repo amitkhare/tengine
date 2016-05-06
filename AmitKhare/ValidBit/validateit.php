@@ -1,7 +1,7 @@
 <?php
-namespace AmitKhare\PHPValidation;
+namespace AmitKhare\ValidBit;
 
-class ValidateIt {
+class ValidBit {
 
 	private $code;
 	private $msgs;
