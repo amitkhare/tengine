@@ -12,7 +12,7 @@ class ValidateIt {
 		$this->msgs = false;
 		$this->code = 200;
 	}
-	
+
 	public function setSource($source){
 		$this->source=$source;
 	}

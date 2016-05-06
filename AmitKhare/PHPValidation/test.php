@@ -2,8 +2,6 @@
 namespace AmitKhare\PHPValidation;
 
 require(__DIR__."/validateit.php");
-//print_r($_GET);
-
 
 $v = new ValidateIt();
 
