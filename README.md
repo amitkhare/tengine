@@ -1,5 +1,5 @@
-# amitkhare/validology
-Validology is an easy to use PHP validation library
+# amitkhare/validbit
+Validbit is an easy to use PHP validation library
 
 ## Install
 
@@ -7,25 +7,25 @@ Run this command from the directory in which you want to install.
 
 Via Composer:
 
-    php composer.phar require amitkhare/validology
+    php composer.phar require amitkhare/validbit
 
 Via Git:
 
-    git clone https://github.com/amitkhare/validology.git
+    git clone https://github.com/amitkhare/validbit.git
 
 Manual Install:
 
-    Download: https://github.com/amitkhare/validology/archive/master.zip
-    Extract it, require "PATH-TO/"."validology.php" where you want to use it.
+    Download: https://github.com/amitkhare/validbit/archive/master.zip
+    Extract it, require "PATH-TO/"."validbit.php" where you want to use it.
 
 Usage:
     
     <?php
-        use AmitKhare\Validology;
+        use AmitKhare\ValidBit;
         
-        require("PATH-TO/"."validology.php"); // only need to include if installed manually.
+        require("PATH-TO/"."validbit.php"); // only need to include if installed manually.
         
-        $v = new Validology();
+        $v = new ValidBit();
         
         $v->setSource($_POST);
         
