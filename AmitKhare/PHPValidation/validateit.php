@@ -13,95 +13,54 @@ class ValidateIt {
 	}
 	
 	public function setSource($source){
-		$this->source;
+		$this->source=$source;
 	}
 
 	public function check($field="",$rules="required|numeric|min:2|max:5"){
-		if(!isset($this->source[$field]) || $this->source[$field]==""){
-			$this->setStatus(500,$this->readable($field));
-		}
+        $rules = explode("|", $rules);
+        foreach ($rules as $rule) {
+            $this->_fetchRule($field,$rule);
+        }
 	}
 
-	private function  _fetchRules($rules){
-		$rules = explode("|", $rules);
-		switch($rules){
+	private function  _fetchRule($field,$rule){
+		switch($rule){
                 case 'required':
-                    $this->validateRequired($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeEmail($var);
-                    }
+                    $this->required($field);
                     break;
 
                 case 'email':
-                    $this->validateEmail($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeEmail($var);
-                    }
+                    $this->validateEmail($field);
                     break;
 
                 case 'url':
-                    $this->validateUrl($var);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeUrl($var);
-                    }
+                    $this->validateUrl($field);
                     break;
 
                 case 'numeric':
-                    $this->validateNumeric($var, $opt['min'], $opt['max'], $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeNumeric($var);
-                    }
+                    $this->validateNumeric($field,$min=0,$max=0);
                     break;
 
                 case 'string':
-                    $this->validateString($var, $opt['min'], $opt['max'], $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeString($var);
-                    }
+                    $this->validateString($field,$min=0,$max=0);
                 break;
 
                 case 'float':
-                    $this->validateFloat($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeFloat($var);
-                    }
+                    $this->validateFloat($field);
                     break;
 
                 case 'ipv4':
-                    $this->validateIpv4($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeIpv4($var);
-                    }
+                    $this->validateIpv4($field);
                     break;
 
                 case 'ipv6':
-                    $this->validateIpv6($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitizeIpv6($var);
-                    }
+                    $this->validateIpv6($field);
                     break;
 
                 case 'bool':
-                    $this->validateBool($var, $opt['required']);
-                    if(!array_key_exists($var, $this->errors))
-                    {
-                        $this->sanitized[$var] = (bool) $this->source[$var];
-                    }
+                    $this->validateBool($field);
                     break;
             }
-	}
-
-	private function readable($field){
-		$str = "The '".$field."' field is not set.";
-		return $str;
 	}
 
 	public function setStatus($code,$msg){
@@ -119,7 +78,8 @@ class ValidateIt {
 	public function getStatus(){
 		$status = array(
 				"code"=>$this->code,
-				"msgs"=>$this->msgs
+				"msgs"=>$this->msgs,
+                "source"=>$this->source
 			);
 		return $status;
 	}
@@ -134,235 +94,83 @@ class ValidateIt {
 		return $default;
 	}
 
-	/**
-     *
-     * @Check if POST variable is set
-     *
-     * @access private
-     *
-     * @param string $var The POST variable to check
-     *
-     */
-    private function is_set($var)
-    {
-        if(!isset($this->source[$var]))
-        {
-            $mssg = $var . ' is not set';
-            $this->setStatus(500,$mssg);
+	private function is_set($field) {
+        if(!isset($this->source[$field])){
+            $this->setStatus(500,sprintf("The `%s` field is not set.", $field));
         }
     }
 
-
-
-    /**
-     *
-     * @validate an ipv4 IP address
-     *
-     * @access private
-     *
-     * @param string $var The variable name
-     *
-     * @param bool $required
-     *
-     */
-    private function validateIpv4($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
+    private function required($field){
+        if(!isset($this->source[$field])){
+            $this->setStatus(500,sprintf("The `%s` field is not set.", $field));
+        } elseif(empty($this->source[$field]) || $this->source[$field]=="" || strlen($this->source[$field]) == 0){
+            $this->setStatus(500,sprintf("The `%s` field is required.", $field));
         }
-        if(filter_var($this->source[$var], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE)
-        {
-            $mssg = $var . ' is not a valid IPv4';
-            $this->setStatus(500,$mssg);
+
+    }
+
+    private function validateIpv4($field) {
+        if(filter_var($this->source[$field], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE) {
+            $this->setStatus(500,$field . ' is not a valid IPv4');
         }
     }
 
-    /**
-     *
-     * @validate an ipv6 IP address
-     *
-     * @access private
-     *
-     * @param string $var The variable name
-     *
-     * @param bool $required
-     *
-     */
-    public function validateIpv6($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-
-        if(filter_var($this->source[$var], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === FALSE)
-        {
-            $mssg = $var . ' is not a valid IPv6';
-            $this->setStatus(500,$mssg);
+    public function validateIpv6($field) {
+        if(filter_var($this->source[$field], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === FALSE) {
+            $this->setStatus(500,$field . ' is not a valid IPv6');
         }
     }
 
-    /**
-     *
-     * @validate a floating point number
-     *
-     * @access private
-     *
-     * @param $var The variable name
-     *
-     * @param bool $required
-     */
-    private function validateFloat($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-        if(filter_var($this->source[$var], FILTER_VALIDATE_FLOAT) === false)
-        {
-            $mssg = $var . ' is an invalid float';
-            $this->setStatus(500,$mssg);
+    private function validateFloat($field) {
+        if(filter_var($this->source[$field], FILTER_VALIDATE_FLOAT) === false) {
+            $this->setStatus(500,$field . ' is an invalid float');
         }
     }
 
-    /**
-     *
-     * @validate a string
-     *
-     * @access private
-     *
-     * @param string $var The variable name
-     *
-     * @param int $min the minimum string length
-     *
-     * @param int $max The maximum string length
-     *
-     * @param bool $required
-     *
-     */
-    private function validateString($var, $min=0, $max=0, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
+    private function validateString($field,$min=0,$max=0) {
+        if(isset($this->source[$field])) {
 
-        if(isset($this->source[$var]))
-        {
-            if(strlen($this->source[$var]) < $min)
-            {
-                    $mssg = $var . ' is too short';
+            if(!is_string($this->source[$field])) {
+                $this->setStatus(500, $field . ' is invalid string');
             }
-            elseif(strlen($this->source[$var]) > $max)
-            {
-                    $mssg = $var . ' is too long';
-            }
-            elseif(!is_string($this->source[$var]))
-            {
-                    $mssg = $var . ' is invalid';
+
+            if($min!==0 && $max!==0){
+                if(strlen($this->source[$field]) < $min) {
+                    $this->setStatus(500,$field . ' is too short');
+                } elseif(strlen($this->source[$field]) > $max) {
+                    $this->setStatus(500,$field . ' is too long');
+                }
             }
         }
     }
 
-    /**
-     *
-     * @validate an number
-     *
-     * @access private
-     *
-     * @param string $var the variable name
-     *
-     * @param int $min The minimum number range
-     *
-     * @param int $max The maximum number range
-     *
-     * @param bool $required
-     *
-     */
-    private function validateNumeric($var, $min=0, $max=0, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-        if(filter_var($this->source[$var], FILTER_VALIDATE_INT, array("options" => array("min_range"=>$min, "max_range"=>$max)))===FALSE)
-        {
-            $mssg = $var . ' is an invalid number';
-            $this->setStatus(500,$mssg);
+    private function validateNumeric($field, $min=0, $max=0) {
+        if($min!==0 && $max!==0){
+            if(filter_var($this->source[$field], FILTER_VALIDATE_INT, array("options" => array("min_range"=>$min, "max_range"=>$max)))===FALSE) {
+                $this->setStatus(500,$field . ' is an invalid number');
+            }
+        } else {
+            if(filter_var($this->source[$field], FILTER_VALIDATE_INT)===FALSE) {
+                $this->setStatus(500,$field . ' is an invalid number');
+            }
         }
     }
 
-    /**
-     *
-     * @validate a url
-     *
-     * @access private
-     *
-      * @param string $var The variable name
-     *
-     * @param bool $required
-     *
-     */
-    private function validateUrl($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-        if(filter_var($this->source[$var], FILTER_VALIDATE_URL) === FALSE)
-        {
-            $mssg = $var . ' is not a valid URL';
-            $this->setStatus(500,$mssg);
+    private function validateUrl($field) {
+        if(filter_var($this->source[$field], FILTER_VALIDATE_URL) === FALSE) {
+            $this->setStatus(500,$field . ' is not a valid URL');
         }
     }
 
-
-    /**
-     *
-     * @validate an email address
-     *
-     * @access private
-     *
-     * @param string $var The variable name 
-     *
-     * @param bool $required
-     *
-     */
-    private function validateEmail($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-        if(filter_var($this->source[$var], FILTER_VALIDATE_EMAIL) === FALSE)
-        {
-            $mssg = $var . ' is not a valid email address';
-            $this->setStatus(500,$mssg);
+    private function validateEmail($field) {
+        if(filter_var($this->source[$field], FILTER_VALIDATE_EMAIL) === FALSE) {
+            $this->setStatus(500,$field . ' is not a valid email address');
         }
     }
 
-
-    /**
-     * @validate a boolean 
-     *
-     * @access private
-     *
-     * @param string $var the variable name
-     *
-     * @param bool $required
-     *
-     */
-    private function validateBool($var, $required=false)
-    {
-        if($required==false && strlen($this->source[$var]) == 0)
-        {
-            return true;
-        }
-        filter_var($this->source[$var], FILTER_VALIDATE_BOOLEAN);
-        {
-            $mssg = $var . ' is Invalid';
-            $this->setStatus(500,$mssg);
+    private function validateBool($field) {
+        filter_var($this->source[$field], FILTER_VALIDATE_BOOLEAN);{
+            $this->setStatus(500,$field . ' is Invalid');
         }
     }
 }
