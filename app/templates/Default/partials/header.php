@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Bare - Start Bootstrap Template</title>
+    <title>Tengine : Template Engine</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
